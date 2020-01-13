@@ -22,15 +22,17 @@ def register(request):
         last_loc = request.POST['last_loc']
         avg_rating = request.POST['avg_rating']
         verified = request.POST['verified']
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'That username is taken')
-            return redirect('register')
+        if person.objects.filter(phone=phone).exists():
+            messages.error(request, 'That phone.no is taken')
+            # return redirect('register')
+            return HttpResponse("Mobile Number already exists")
+
         else:
             register = person(fullname=fullname, password=password, username=username, phone=phone, aadhar=aadhar,
                               phelped=phelped, last_loc=last_loc, avg_rating=avg_rating, verified=verified)
 
             register.save()
-            return HttpResponse("Saved")
+            return HttpResponse("Registered")
     else:
         return redirect('/admin')
 
