@@ -25,7 +25,7 @@ SECRET_KEY = 'zoo_60!mbbtyx&$d8z%ry=u7u4foz-jmjl^y2#k($%fimsdhjw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','172.16.19.219']
+ALLOWED_HOSTS = ['0.0.0.0','172.16.19.219','127.0.0.1','192.168.0.4','172.16.18.33']
 
 
 # Application definition
