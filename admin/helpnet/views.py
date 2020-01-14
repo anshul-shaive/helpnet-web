@@ -80,11 +80,13 @@ def req(request):
         location = request.POST['location']
         nprespond = request.POST['nprespond']
         auth_resp = request.POST['auth_resp']
+        user_id = request.POST['user_id']
+
         # if User.objects.filter(username=username).exists():
         #   messages.error(request, 'That username is taken')
         #   return redirect('register')
         # else:
-        req = req_made(req_type=req_type, status=status, username=username, req_time=req_time, nprespond=nprespond,
+        req = req_made(req_type=req_type, status=status,user_id= user_id, username=username, req_time=req_time, nprespond=nprespond,
                        location=location, auth_resp=auth_resp)
 
         req.save()

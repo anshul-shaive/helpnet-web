@@ -20,7 +20,8 @@ class person (models.Model):
 
 
 class req_made(models.Model):
-    user_id = models.ForeignKey(person, on_delete=models.DO_NOTHING,related_name='uid')
+    # user_id = models.ForeignKey(person, on_delete=models.DO_NOTHING,related_name='uid', null=True, blank=True)
+    user_id = models.CharField(max_length=200)
     req_id = models.AutoField(primary_key=True)
     req_type = models.CharField(max_length=200)
     status = models.CharField(max_length=20)
