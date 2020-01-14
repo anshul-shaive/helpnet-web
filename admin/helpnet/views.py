@@ -81,6 +81,8 @@ def req(request):
         nprespond = request.POST['nprespond']
         auth_resp = request.POST['auth_resp']
         user_id = request.POST['user_id']
+        presponded_ids = request.POST['presponded_ids']
+        passigned_ids = request.POST['passigned_ids']
 
         # if User.objects.filter(username=username).exists():
         #   messages.error(request, 'That username is taken')
