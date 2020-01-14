@@ -89,7 +89,7 @@ def req(request):
         #   return redirect('register')
         # else:
         req = req_made(req_type=req_type, status=status,user_id= user_id, username=username, req_time=req_time, nprespond=nprespond,
-                       location=location, auth_resp=auth_resp)
+                       location=location, auth_resp=auth_resp,presponded_ids=presponded_ids,passigned_ids=passigned_ids)
 
         req.save()
         return HttpResponse("Submitted")
