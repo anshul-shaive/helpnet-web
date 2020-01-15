@@ -16,7 +16,7 @@ class person (models.Model):
     avg_rating = models.CharField(null=True, default=0, blank=True, max_length=5)
 
     def __str__(self):
-        return self.username
+        return "reg"
 
 
 class req_made(models.Model):
