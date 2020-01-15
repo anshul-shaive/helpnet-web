@@ -28,7 +28,7 @@ class req_made(models.Model):
     req_type = models.CharField(max_length=200)
     status = models.CharField(max_length=20)
     username = models.CharField(max_length=200, null=True, blank=True)
-    req_time = models.CharField(max_length=6)
+    req_time = models.CharField(max_length=200)
     location = models.CharField(max_length=20)
     nprespond = models.CharField(null=True, default=0, blank=True, max_length=5)
     auth_resp = models.CharField(max_length=200, null=True, blank=True)
