@@ -29,9 +29,18 @@ class req_made(models.Model):
     status = models.CharField(max_length=20)
     username = models.CharField(max_length=200, null=True, blank=True)
     req_time = models.CharField(max_length=200)
-    location = models.CharField(max_length=20)
-    nprespond = models.CharField(null=True, default=0, blank=True, max_length=5)
-    auth_resp = models.CharField(max_length=200, null=True, blank=True)
+    location = models.CharField(max_length=200)
+    nprespond = models.CharField(null=True, default=0, blank=True, max_length=20)
+    auth_resp = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
         return "ad"
+
+
+class loc(models.Model):
+    user_id = models.CharField(max_length=200)
+    last_loc = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return "hd"
+

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import person,req_made
+from .models import person,req_made,loc
 
 class ContactAdmin(admin.ModelAdmin):
   list_display = ('user_id', 'username', 'phelped', 'phone', 'aadhar','photo','last_loc','verified','avg_rating')
@@ -19,4 +19,13 @@ class ReqAdmin(admin.ModelAdmin):
   list_per_page = 25
 
 admin.site.register(req_made, ReqAdmin)
+
+class LocAdmin(admin.ModelAdmin):
+  list_display = ('user_id','last_loc')
+  list_display_links = ('user_id','last_loc')
+  search_fields = ('user_id','last_loc')
+  list_per_page = 25
+
+admin.site.register(loc, LocAdmin)
+
 

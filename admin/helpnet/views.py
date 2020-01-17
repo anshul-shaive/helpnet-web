@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, HttpResponse
 import json
-from .models import person, req_made
+from .models import person, req_made,loc
 import requests
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -34,7 +34,9 @@ def register(request):
             register.save()
             return HttpResponse("Registered")
     else:
-        return redirect('/admin')
+        return render(request,"helpnet/index.html")
+    # else:
+    #     return redirect('/admin')
 
 #
 # def send_otp(request):
@@ -94,7 +96,9 @@ def req(request):
         req.save()
         return HttpResponse("Submitted")
     else:
-        return redirect('/admin')
+        return render(request,"helpnet/index.html")
+    # else:
+    #     return redirect('/admin')
 
 
 @csrf_exempt
@@ -112,3 +116,29 @@ def login(request):
             return HttpResponse("Wrong Password")
     else:
         return redirect('/admin')
+
+@csrf_exempt
+def update(request):
+    if request.method == 'POST':
+        user_id = request.POST['user_id']
+        req_id = request.POST['req_id']
+
+        ob = req_made.objects.get(req_id=str(req_id))
+        req_made.objects.filter(req_id=str(req_id)).update(presponded_ids=ob.presponded_ids+user_id+",")
+    return HttpResponse("updated")
+
+@csrf_exempt
+def update_loc(request):
+    if request.method == 'POST':
+        user_id = request.POST['user_id']
+        last_loc = request.POST['last_loc']
+        print(loc.objects.filter(user_id=user_id).exists())
+        if (loc.objects.filter(user_id=user_id).exists()):
+            ob = loc.objects.get(user_id=str(user_id))
+            loc.objects.filter(user_id=str(user_id)).update(last_loc=last_loc)
+        else:
+            locate = loc(user_id=user_id,last_loc=last_loc)
+            locate.save()
+    return HttpResponse("updated_loc")
+
+
