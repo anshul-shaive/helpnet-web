@@ -9,6 +9,8 @@ import requests
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
+import math
+
 
 @csrf_exempt
 def register(request):
@@ -132,13 +134,56 @@ def update_loc(request):
     if request.method == 'POST':
         user_id = request.POST['user_id']
         last_loc = request.POST['last_loc']
-        print(loc.objects.filter(user_id=user_id).exists())
+
+        lat_2 = float(last_loc.split(':')[0])
+        lng_2 = float(last_loc.split(':')[1])
+
+        lst = req_made.objects.values_list('req_id','location')
+        # print(lst)
+
+        final_lst =[]
+        for i in lst:
+            location_req = i[1]
+            lat_1 = float(location_req.split(':')[0])
+            lng_1 = float(location_req.split(':')[1])
+
+            diff_distance = get_distance(lat_1,lng_1,lat_2,lng_2)
+            if(diff_distance <= 5 ):
+                final_lst.append(i[0])
+        # print(final_lst)
+
+        actual_req = {}
+        req="request"
+        count=1
+        for i in final_lst:
+            val=list(req_made.objects.filter(req_id=i).values())[0]
+            actual_req[req+str(count)]=val
+            count=count+1
+        
+
         if (loc.objects.filter(user_id=user_id).exists()):
             ob = loc.objects.get(user_id=str(user_id))
             loc.objects.filter(user_id=str(user_id)).update(last_loc=last_loc)
         else:
             locate = loc(user_id=user_id,last_loc=last_loc)
             locate.save()
-    return HttpResponse("updated_loc")
+    return HttpResponse(json.dumps(actual_req))
+
+
+
+def get_distance(lat_1, lng_1, lat_2, lng_2):
+    lat_1,lng_1,lat_2, lng_2 = map(math.radians, [lat_1,lng_1,lat_2, lng_2]) 
+    d_lat = lat_2 - lat_1
+    d_lng = lng_2 - lng_1 
+
+    temp = (  
+         math.sin(d_lat / 2) ** 2 
+       + math.cos(lat_1) 
+       * math.cos(lat_2) 
+       * math.sin(d_lng / 2) ** 2
+    )
+
+    return 6373.0 * (2 * math.atan2(math.sqrt(temp), math.sqrt(1 - temp)))
+
 
 
