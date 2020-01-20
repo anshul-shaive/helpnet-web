@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, HttpResponse
 import json
-from .models import person, req_made,loc
+from .models import person, req_made, loc
 import requests
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -36,9 +36,10 @@ def register(request):
             register.save()
             return HttpResponse("Registered")
     else:
-        return render(request,"helpnet/index.html")
+        return render(request, "helpnet/index.html")
     # else:
     #     return redirect('/admin')
+
 
 #
 # def send_otp(request):
@@ -92,13 +93,19 @@ def req(request):
         #   messages.error(request, 'That username is taken')
         #   return redirect('register')
         # else:
-        req = req_made(req_type=req_type, status=status,user_id= user_id, username=username, req_time=req_time, nprespond=nprespond,
-                       location=location, auth_resp=auth_resp,presponded_ids=presponded_ids,passigned_ids=passigned_ids)
+        req = req_made(req_type=req_type, status=status, user_id=user_id, username=username, req_time=req_time,
+                       nprespond=nprespond,
+                       location=location, auth_resp=auth_resp, presponded_ids=presponded_ids,
+                       passigned_ids=passigned_ids)
 
         req.save()
-        return HttpResponse("Submitted")
+        req_id = req.req_id
+        # ob = req_made.objects.get(user_id=user_id,req_time=req_time)
+        #
+        # req_id = ob.req_id
+        return HttpResponse(req_id)
     else:
-        return render(request,"helpnet/index.html")
+        return render(request, "helpnet/index.html")
     # else:
     #     return redirect('/admin')
 
@@ -119,6 +126,34 @@ def login(request):
     else:
         return redirect('/admin')
 
+
+@csrf_exempt
+def helpinfo(request):
+    if request.method == 'POST':
+        req_id = request.POST['req_id']
+
+        ob = req_made.objects.get(req_id=str(req_id))
+
+        presponded = ob.presponded_ids
+        passigned = ob.passigned_ids
+        resls=[]
+        uloc=[]
+
+        if presponded != "":
+            presponded=presponded[:-1]
+            resls=presponded.split(",")
+            for uid in resls:
+                ob = loc.objects.get(user_id=str(uid))
+                res_loc = ob.last_loc
+                uloc.append(str(uid)+"L"+str(res_loc))
+
+            return HttpResponse(str(uloc))
+        else:
+             return HttpResponse("")
+    else:
+        return redirect('/admin')
+
+
 @csrf_exempt
 def update(request):
     if request.method == 'POST':
@@ -126,8 +161,14 @@ def update(request):
         req_id = request.POST['req_id']
 
         ob = req_made.objects.get(req_id=str(req_id))
-        req_made.objects.filter(req_id=str(req_id)).update(presponded_ids=ob.presponded_ids+user_id+",")
+        req_made.objects.filter(req_id=str(req_id)).update(presponded_ids=ob.presponded_ids + user_id + ",")
+        if(ob.nprespond==""):
+            req_made.objects.filter(req_id=str(req_id)).update(nprespond="1")
+        else:
+            req_made.objects.filter(req_id=str(req_id)).update(nprespond=str(int(ob.nprespond) + 1))
+
     return HttpResponse("updated")
+
 
 @csrf_exempt
 def update_loc(request):
@@ -138,52 +179,51 @@ def update_loc(request):
         lat_2 = float(last_loc.split(':')[0])
         lng_2 = float(last_loc.split(':')[1])
 
-        lst = req_made.objects.values_list('req_id','location')
+        lst = req_made.objects.values_list('req_id', 'location')
         # print(lst)
 
-        final_lst =[]
+        rtype=[]
+        final_lst = []
         for i in lst:
             location_req = i[1]
+            ob = req_made.objects.get(req_id=i[0])
             lat_1 = float(location_req.split(':')[0])
             lng_1 = float(location_req.split(':')[1])
 
-            diff_distance = get_distance(lat_1,lng_1,lat_2,lng_2)
-            if(diff_distance <= 5 ):
+            diff_distance = get_distance(lat_1, lng_1, lat_2, lng_2)
+            if (diff_distance <= 5):
                 final_lst.append(i[0])
+                rtype.append(str(ob.req_type)+"        " + str(round(diff_distance*1000,3))+"m away")
         # print(final_lst)
 
         actual_req = {}
-        req="request"
-        count=1
+        req = "request"
+        count = 1
         for i in final_lst:
-            val=list(req_made.objects.filter(req_id=i).values())[0]
-            actual_req[req+str(count)]=val
-            count=count+1
-        
+            val = list(req_made.objects.filter(req_id=i).values())[0]
+            actual_req[req + str(count)] = val
+            count = count + 1
+        actual_req["rtypes"] = rtype
 
         if (loc.objects.filter(user_id=user_id).exists()):
             ob = loc.objects.get(user_id=str(user_id))
             loc.objects.filter(user_id=str(user_id)).update(last_loc=last_loc)
         else:
-            locate = loc(user_id=user_id,last_loc=last_loc)
+            locate = loc(user_id=user_id, last_loc=last_loc)
             locate.save()
     return HttpResponse(json.dumps(actual_req))
 
 
-
 def get_distance(lat_1, lng_1, lat_2, lng_2):
-    lat_1,lng_1,lat_2, lng_2 = map(math.radians, [lat_1,lng_1,lat_2, lng_2]) 
+    lat_1, lng_1, lat_2, lng_2 = map(math.radians, [lat_1, lng_1, lat_2, lng_2])
     d_lat = lat_2 - lat_1
-    d_lng = lng_2 - lng_1 
+    d_lng = lng_2 - lng_1
 
-    temp = (  
-         math.sin(d_lat / 2) ** 2 
-       + math.cos(lat_1) 
-       * math.cos(lat_2) 
-       * math.sin(d_lng / 2) ** 2
+    temp = (
+            math.sin(d_lat / 2) ** 2
+            + math.cos(lat_1)
+            * math.cos(lat_2)
+            * math.sin(d_lng / 2) ** 2
     )
 
     return 6373.0 * (2 * math.atan2(math.sqrt(temp), math.sqrt(1 - temp)))
-
-
-
