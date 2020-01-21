@@ -36,9 +36,14 @@ def register(request):
             register.save()
             return HttpResponse("Registered")
     else:
-        return render(request, "helpnet/index.html")
-    # else:
-    #     return redirect('/admin')
+        data = req_made.objects.all()
+        
+        reqsend = {
+            "req_number": data
+        }
+        
+        return render(request, 'helpnet/index.html', reqsend)
+
 
 
 #
@@ -106,8 +111,9 @@ def req(request):
         return HttpResponse(req_id)
     else:
         return render(request, "helpnet/index.html")
-    # else:
-    #     return redirect('/admin')
+
+
+    
 
 
 @csrf_exempt
@@ -227,3 +233,12 @@ def get_distance(lat_1, lng_1, lat_2, lng_2):
     )
 
     return 6373.0 * (2 * math.atan2(math.sqrt(temp), math.sqrt(1 - temp)))
+
+
+
+@csrf_exempt
+def profile(request,user_id):
+    data = person.objects.filter(user_id=user_id).values()
+    context = {'data': data}
+    return render(request,'helpnet/profile.html',context)
+

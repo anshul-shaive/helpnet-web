@@ -20,7 +20,6 @@ class person (models.Model):
 
 
 class req_made(models.Model):
-    # user_id = models.ForeignKey(person, on_delete=models.DO_NOTHING,related_name='uid', null=True, blank=True)
     user_id = models.CharField(max_length=200)
     presponded_ids = models.TextField(null=True, blank=True)
     passigned_ids = models.TextField(null=True, blank=True)
@@ -34,7 +33,7 @@ class req_made(models.Model):
     auth_resp = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):
-        return "ad"
+        return "req"
 
 
 class loc(models.Model):
@@ -42,5 +41,5 @@ class loc(models.Model):
     last_loc = models.TextField(null=True, blank=True)
     
     def __str__(self):
-        return "hd"
+        return "loc"
 

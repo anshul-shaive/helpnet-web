@@ -14,8 +14,32 @@
 		vertical-align: baseline;
 	}
 	span{
-		margin: 10px 30px 10px 30px;
+		margin: 10px 60px 10px 50px;
 	}
+
+	#al{
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+		float:left;
+
+	}
+	#lr{
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+		float: right;
+	}
+
+	
+
+
 
 	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 		display: block;

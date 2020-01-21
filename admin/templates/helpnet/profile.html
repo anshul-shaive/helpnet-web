@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    {% for res in data %}
+    <h3>Profile_Pic: {{ res.photo }}</h3>
+    <br>
+    <h3>User Id: {{ res.user_id }}</h3>
+    <br>
+    <h3>Aadhar No.: {{ res.aadhar }}</h3>
+    <br>
+    <h3>Name: {{ res.fullname }}</h3>
+    <br>
+    <h3>Phone: {{ res.phone }}</h3>
+    <br>
+    <h3>Verified: {{ res.verified }}</h3>
+    <br>
+    <h3>Last Location: {{ res.last_loc }}</h3>
+    <br>
+    <h3>Rating : {{ res.avg_rating }}</h3>
+    {% endfor %}
+</body>
+</html>
